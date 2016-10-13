@@ -1,0 +1,28 @@
+---
+- hosts: local
+
+  tasks:
+
+  - include_vars: siteinfo.yml
+
+  - debug: msg="docker-compose build"
+  - debug: msg="docker-compose up -d"
+
+  - pause: prompt="Docker Compose build"
+
+  - name: Docker Compose Build
+    command: "docker-compose build"
+    register: dcb
+  - debug: var=dcb.stdout_lines
+
+  - pause: prompt="Docker Compose Up"
+
+  - name: Docker Compose Up
+    command: "docker-compose up -d"
+    register: dcu
+  - debug: var=dcu.stdout_lines
+
+  - pause: prompt="Open Site"
+
+  - name: Run container
+    command: open http://localhost:82

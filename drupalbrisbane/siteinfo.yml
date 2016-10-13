@@ -1,0 +1,6 @@
+---
+image_name: jb/drupalbrisb
+image_version: 0.1
+container_name: drubri03
+dbhost: database
+dbname: drupalbrisbane

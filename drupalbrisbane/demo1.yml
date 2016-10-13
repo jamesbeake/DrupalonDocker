@@ -1,0 +1,31 @@
+---
+- hosts: local
+
+  vars:
+      image_name: jb/drupalbris
+      image_version: 0.1
+      container_name: drubri01
+
+  tasks:
+
+  - debug: msg="docker build -t {{ image_name }}:{{ image_version }} ."
+  - debug: msg="docker run -d -p 80:80 --name {{ container_name }} {{ image_name }}:{{ image_version }}"
+
+  - pause: prompt="docker build"
+
+  - name: Build Drupal Site container
+    command: "docker build -t {{ image_name }}:{{ image_version }} ."
+    register: db
+  - debug: var=db.stdout_lines
+
+  - pause: prompt="docker run"
+
+  - name: Run container
+    command: "docker run -d -p 80:80 --name {{ container_name }} {{ image_name }}:{{ image_version }}"
+    register: dr
+  - debug: var=dr.stdout_lines
+
+  - pause: prompt="Open browser"
+
+  - name: Run container
+    command: open http://localhost:80

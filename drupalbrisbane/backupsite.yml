@@ -1,0 +1,28 @@
+---
+- hosts: local
+
+  tasks:
+
+  - include_vars: siteinfo.yml
+
+  - name: current path used in volume command
+    command: pwd
+    register: pwd
+  - debug: var=pwd
+
+  - name: sitename based on foldername
+    shell: pwd | xargs basename
+    register: sitename
+  - debug: var=sitename.stdout
+
+  - name: backup site volume (local)
+    command: docker run --rm -v {{ pwd.stdout }}:/root/exit --volumes-from {{ container_name }} {{ image_name }}:{{ image_version }} tar czf /root/exit/backup/site.tar.gz sites
+    register: backup_site_result
+  - debug: var=backup_site_result
+
+  - debug: msg=docker run --rm  --volumes-from {{ container_name }} --link {{ dbhost }} --network {{ sitename.stdout }}_default {{ image_name }}:{{image_version}} mysqldump -h{{dbhost}} -udrupal -ppassword {{dbname}}
+  - name: backup database volume (local)
+    shell: docker run --rm  --volumes-from {{ container_name }} --link {{ dbhost }} --network {{ sitename.stdout }}_default {{ image_name }}:{{image_version}} mysqldump -h{{dbhost}} -udrupal -ppassword {{dbname}} > backup/site-dump.sql
+    register: backup_db_result
+    ignore_errors: True
+  - debug: var=backup_db_result

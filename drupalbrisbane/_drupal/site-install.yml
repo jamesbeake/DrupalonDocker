@@ -1,0 +1,36 @@
+commands:
+# Install Drupal
+  - command: site:install
+    options:
+      langcode: en
+      db-type: sqlite
+      db-file: sites/default/files/.ht.sqlite
+#      db-type: mysql
+#      db-host: db_dev
+#      db-name: devdb # default database
+#      db-user: drupal # local config
+#      db-pass: password # local config
+#      db-port: 3306
+      site-name: 'Drupal Brisbane'
+      site-mail: jamesbeake@gmail.com # default email
+      account-name: admin # default account
+      account-mail: jamesbeake@gmail.com # default email
+      account-pass: admin # default pass
+    arguments:
+      profile: standard
+# Install modules
+  - command: module:install
+    arguments:
+      module:
+#        - panels
+#        - admin_toolbar
+#        - admin_toolbar_tools
+#        - disqus
+#        - big_pipe
+#        - token
+#        - ctools
+#        - pathauto
+# Rebuild caches
+  - command: cache:rebuild
+    arguments:
+        cache: all

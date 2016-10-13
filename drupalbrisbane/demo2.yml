@@ -1,0 +1,30 @@
+---
+- hosts: local
+
+  vars:
+      image_name: jb/drupalbris
+      image_version: 0.1
+      container_name: drubri02
+      d_vol: db_sitefiles
+
+  tasks:
+
+  - debug: msg="docker volume create --name {{d_vol }}"
+  - debug: msg="docker run -d -p 81:80 -v {{d_vol}}:/var/www/drupal_site/sites/default/files --name {{ container_name }} {{ image_name }}:{{ image_version }}"
+
+  - pause: prompt="Docker create volume"
+
+  - name: Create Docker Volume
+    command: "docker volume create --name {{d_vol }}"
+
+  - pause: prompt="Docker run - with volume"
+
+  - name: Run container with persistent storage
+    command: "docker run -d -p 81:80 -v {{d_vol}}:/var/www/drupal_site/sites/default/files --name {{container_name}} {{ image_name }}:{{ image_version }}"
+    register: dr
+  - debug: var=dr.stdout_lines
+
+  - pause: prompt="Open Site"
+
+  - name: Run container
+    command: open http://localhost:81

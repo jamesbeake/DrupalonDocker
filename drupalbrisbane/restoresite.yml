@@ -1,0 +1,26 @@
+---
+- hosts: local
+
+  tasks:
+
+  - include_vars: siteinfo.yml
+
+  - name: current path used in volume command
+    command: pwd
+    register: pwd
+  - debug: var=pwd
+
+  - name: create sitename var based on current folder
+    shell: pwd | xargs basename
+    register: sitename
+  - debug: var=sitename.stdout
+
+  - name: Restore site volume (local)
+    command: docker run --rm -v "{{ pwd.stdout }}":/root/exit --volumes-from {{container_name}} {{image_name}}:{{image_version}} tar xzf /root/exit/backup/site.tar.gz sites
+    register: restore_site_files
+  - debug: var=restore_site_files
+
+  - name: Restore database volume (local)
+    command: docker run --rm -v "{{ pwd.stdout }}":/root/exit --volumes-from {{container_name}} --link {{dbhost}} --network {{sitename.stdout}}_default {{image_name}}:{{image_version}} sh -c "mysql -h{{dbhost}} -udrupal -ppassword {{dbname}} < /root/exit/backup/site-dump.sql"
+    register: restore_site_db
+  - debug: var=restore_site_db

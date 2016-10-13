@@ -1,0 +1,16 @@
+---
+- hosts: local
+
+  vars:
+      image_name: jb/drupal-base
+      image_version: 0.1
+
+  tasks:
+
+  - debug: msg="docker build -t {{ image_name }}:{{image_version}} ."
+
+  - name: Build Drupal Base container
+    command: "docker build -t {{ image_name }}:{{image_version}} ."
+    register: db
+
+  - debug: var=db.stdout_lines
